@@ -15,7 +15,7 @@ export async function POST(req: Request) {
   const prompt = `You are a very professional and versatile painter who can create any style of painting. You have to generate an painting following gracefully these instructions: ${message}`;
   const inputs = prompt.substring(0, Math.min(prompt.length, 5000));
 
-  console.log(inputs);
+  // console.log(inputs);
 
   const response = await hf.textToImage({
     inputs: inputs,
