@@ -73,7 +73,7 @@ export default function App() {
                         {
                         image && 
                         <div className="card w-full h-screen max-w-md py-24 mx-auto stretch">
-                            <img src={`data:image/jpeg;base64,${image}`} />
+                            <img src={image} />
                             <textarea
                             className="mt-4 w-full text-white bg-black h-64"
                             value={paintingDescription}
@@ -84,10 +84,10 @@ export default function App() {
                         { imageIsLoading &&
                         <div className="flex justify-center items-center h-screen">
                             <div className="loader">
-                            <div className="animate-pulse flex space-x-4 justify-center content-center">
-                                <div className="rounded-full bg-slate-700 h-10 w-10"></div>
-                                <span className="h-10">{status}</span>
-                            </div>
+                                <div className="animate-pulse flex space-x-4">
+                                    <div className="rounded-full bg-slate-700 h-10 w-10"></div>
+                                    <span className="h-10 justify-center content-center">{status}</span>
+                                </div>
                             </div>
                         </div>
                         } 
@@ -163,7 +163,7 @@ export default function App() {
                                             }),
                                         });
                                         const imageData = await imageResponse.json();
-                                        setImage(imageData);
+                                        setImage(`data:image/jpeg;base64,${imageData}`);
                                         setImageIsLoading(false);
                                         setStatus("Generando tu NFT...");
                                         }
