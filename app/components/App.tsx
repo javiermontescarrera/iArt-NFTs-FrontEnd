@@ -129,7 +129,7 @@ export default function App() {
                                     </div>
                                     <div className="text-center mt-4">
                                     <button
-                                        className="bg-blue-500 p-2 text-white rounded shadow-xl"
+                                        className="bg-blue-500 p-2 text-white rounded-lg shadow-xl"
                                         disabled={isLoading || !state.style}
                                         onClick={
                                         async () => {
