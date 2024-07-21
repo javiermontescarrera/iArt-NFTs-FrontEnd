@@ -10,7 +10,7 @@ import {
 export function UploadImage(params: any) {
   // console.log(JSON.stringify(params));
 
-  // Wagmi new version====================================================================================
+  // Wagmi ===============================================================================================
   const { 
     data: hash,
     error,  
@@ -55,7 +55,7 @@ export function UploadImage(params: any) {
             abi: params.contractAbi, 
             functionName: 'mintToPayer', 
             args: [
-              `iArtNFT - ${params.imageTitle}`, 
+              params.imageTitle, 
               `${params.imageDescription}`, 
               ipfsData.result.IpfsHash
             ],
