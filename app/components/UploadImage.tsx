@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { parseEther } from "viem";
 // import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from "wagmi";
 import { 
   type BaseError, 
@@ -28,6 +29,7 @@ export function UploadImage(params: any) {
   const [ipfsHash, setIpfsHash] = useState("");
 
   const handleMintNFT = (event: any) => {
+    console.log(`Minting nft...`);
     setLoading(true);
 
     const objIPFSUploadBody = {imageContent: params.imageContent};
@@ -48,12 +50,18 @@ export function UploadImage(params: any) {
   
         console.log(`ipfsData.IpfsHash> ${ipfsData.result.IpfsHash}`);
         try {
-          // writeContract({ 
-          //   address: `0x${params.contractAddress}`, 
-          //   abi: params.contractAbi, 
-          //   functionName: 'mintToPayer', 
-          //   args: [`iArtNFT:${params.imageTitle}`, 'Test Description', ipfsData.result.IpfsHash], 
-          // })
+          writeContract({ 
+            address: params.contractAddress, 
+            abi: params.contractAbi, 
+            functionName: 'mintToPayer', 
+            args: [
+              `iArtNFT - ${params.imageTitle}`, 
+              `${params.imageDescription}`, 
+              ipfsData.result.IpfsHash
+            ],
+            // value: parseEther('0.0015'), 
+            value: parseEther('0.0000015'), 
+          })
 
           setNftMinted(true);
         } catch (error) {
@@ -81,23 +89,25 @@ export function UploadImage(params: any) {
     <>
       <div className="w-full display:flex flex-col justify-center align-center">
         {
-          !nftMinted ? (
-            <button 
-              className="bg-blue-500 p-2 text-white rounded-lg shadow-xl"
-              onClick={handleMintNFT}>
-              Mintear mi NFT
-            </button>  
-          ) : (
-            <div className="text-center text-yellow-500 font-bold">Felicitaciones, tu NFT 🖼️ ha sido minteado 😎!</div>
-          )
-        }
-
+          (!nftMinted) && 
+          <button 
+            className="bg-blue-500 p-2 text-white rounded-lg shadow-xl" 
+            disabled={nftMinted}
+            onClick={handleMintNFT}>
+            Mintear mi NFT
+          </button> 
+        } 
         {hash && <div>Transaction Hash: {hash}</div>}
         {isConfirming && <div>Waiting for confirmation...</div>} 
-        {isConfirmed && <div>Transaction confirmed.</div>}  
+        {isConfirmed && (
+          <div>
+            <div>Transacción confirmada.</div>
+            <div className="text-center text-yellow-500 font-bold">Felicitaciones, tu NFT 🖼️ ha sido minteado 😎!</div>
+          </div>
+          )}  
         {error && ( 
           <div>Error: {(error as BaseError).shortMessage || error.message}</div> 
-        )}
+          )}
       </div>
     </>
   );
