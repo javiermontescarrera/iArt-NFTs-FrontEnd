@@ -17,18 +17,23 @@ export async function POST(req: Request) {
 
   // console.log(inputs);
 
-  const response = await hf.textToImage({
-    inputs: inputs,
-    model: model,
-    parameters: {
-      negative_prompt: 'blurry',
-    }
-  });
+  try {
+    const response = await hf.textToImage({
+      inputs: inputs,
+      model: model,
+      parameters: {
+        negative_prompt: 'blurry',
+      }
+    });
+  
+    // console.log(`response.type: ${response.type}`)
+  
+    const buffer = Buffer.from(await response.arrayBuffer());
+    const cadena = `"${buffer.toString('base64')}"`;
+    // console.log(`Cadena: ${cadena}`);
+    return new Response(cadena);
 
-  // console.log(`response.type: ${response.type}`)
-
-  const buffer = Buffer.from(await response.arrayBuffer());
-  const cadena = `"${buffer.toString('base64')}"`;
-  // console.log(`Cadena: ${cadena}`);
-  return new Response(cadena);
+  } catch (error) {
+    console.log(error);
+  }
 }
