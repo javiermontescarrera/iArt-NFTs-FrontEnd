@@ -1,14 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { parseEther } from "viem";
-// import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from "wagmi";
+
 import { 
   type BaseError, 
   useWaitForTransactionReceipt, 
-  useWriteContract 
+  useWriteContract,
+  useReadContract,
 } from 'wagmi';
 
 export function UploadImage(params: any) {
-  // console.log(JSON.stringify(params));
+  const [nftMinted, setNftMinted] = useState(false);
+  const [isLoading, setLoading] = useState(false);
+  const [ipfsHash, setIpfsHash] = useState("");
 
   // Wagmi ===============================================================================================
   const { 
@@ -22,13 +25,24 @@ export function UploadImage(params: any) {
     useWaitForTransactionReceipt({ 
       hash, 
     })
+
+    // useEffect(() => {
+    //   const fetchPrice = async () => {
+    //       const result = useReadContract({
+    //       abi: params.contracAbi,
+    //       address: params.contractAddress,
+    //       functionName: 'getPrice',
+    //       })
+
+    //       console.log(`nft cost: ${JSON.stringify(result)}`);
+    //   };
+
+    //   fetchPrice();
+    // }, [ipfsHash]);
+      
   // =====================================================================================================
 
-  const [nftMinted, setNftMinted] = useState(false);
-  const [isLoading, setLoading] = useState(false);
-  const [ipfsHash, setIpfsHash] = useState("");
-
-  const handleMintNFT = (event: any) => {
+  const handleMintNFT = async (event: any) => {
     console.log(`Minting nft...`);
     setLoading(true);
 
@@ -64,6 +78,7 @@ export function UploadImage(params: any) {
           })
 
           setNftMinted(true);
+          console.log(`Mint transaction hash: ${hash}`);
         } catch (error) {
           console.error(error);
         }
@@ -97,12 +112,14 @@ export function UploadImage(params: any) {
             Mintear mi NFT
           </button> 
         } 
-        {hash && <div>Transaction Hash: {hash}</div>}
-        {isConfirming && <div>Waiting for confirmation...</div>} 
+        {isConfirming && <div>Esperando confirmación de la Transacción...</div>} 
         {isConfirmed && (
           <div>
             <div>Transacción confirmada.</div>
             <div className="text-center text-yellow-500 font-bold">Felicitaciones, tu NFT 🖼️ ha sido minteado 😎!</div>
+            <div className="text-center text-white-500 font-semibold">
+              Puedes ver tu NFT en opensea, en la sección de mis NFTs <a className="text-blue-500 underline font-bold" href={`https://testnets.opensea.io/${params.walletAddress}`}> Aqui</a>
+            </div>
           </div>
           )}  
         {error && ( 
