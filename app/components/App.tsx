@@ -76,158 +76,149 @@ const App: NextPage = () => {
             </Head>
 
             <div className="text-center flex flex-col">
-                <div className="fixed py-4 w-full flex flex-col justify-center text-center bg-black">
-                    <h1 className="font-semibold font-sans text-3xl">
-                        {process.env.NEXT_PUBLIC_RAINBOW_PROJECT_NAME || 'iArt NFTs'}
-                    </h1>
-                    {
-                        !isConnected && 
-                        <div className="mt-4 font-semibold">
-                            <p>Conecta tu billetera para comenzar 🚀</p>
-                        </div>
-                    }
-                    <div className="flex flex-wrap justify-center mt-4">
-                        <ConnectButton />
-                    </div>
+                <h1 className="font-semibold font-sans text-3xl">{process.env.NEXT_PUBLIC_RAINBOW_PROJECT_NAME || 'iArt NFTs'}</h1>
+                <div className="flex flex-wrap justify-center mt-4">
+                <ConnectButton />
                 </div>
-                <br />
                 { 
-                    isConnected &&
-                    <>
-                        {
-                        image && 
-                        <div className="card mt-4 w-full h-screen max-w-md py-24 mx-auto stretch">
-                            <img src={`data:image/jpeg;base64,${image}`} />
-                            <textarea
+                    !isConnected ? (
+                        <div className="mt-4 font-semibold">Conecta tu billetera para comenzar 🚀</div>
+                    ) 
+                    :
+                    (
+                        <>
+                            {
+                            image && 
+                            <div className="card w-full h-screen max-w-md py-5 mx-auto stretch">
+                                <img src={`data:image/jpeg;base64,${image}`} />
+                                <textarea
                                 className="mt-4 w-full text-white bg-black h-64"
                                 value={`Titulo: ${paintingTitle}\n\nDescripción: ${paintingDescription}`}
                                 readOnly
-                            />
-                            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-                                <UploadImage 
-                                    backend_url='api/ipfs' 
-                                    imageContent={image}
-                                    imageTitle={paintingTitle}
-                                    imageDescription={paintingDescription}
-                                    contractAddress={process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDR || '0x'}
-                                    contractAbi={iArtNFTJson.abi}
-                                    walletAddress={address}
-                                    className="w-full"
                                 />
+                                <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
+                                    <UploadImage 
+                                        backend_url='api/ipfs' 
+                                        imageContent={image}
+                                        imageTitle={paintingTitle}
+                                        imageDescription={paintingDescription}
+                                        contractAddress={process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDR || '0x'}
+                                        contractAbi={iArtNFTJson.abi}
+                                        walletAddress={address}
+                                        className="w-full"
+                                    />
+                                </div>
                             </div>
-                        </div>
-                        }
-                        { 
-                            imageIsLoading ? (
-                                <div className="flex justify-center items-center h-screen">
-                                    <div className="loader">
-                                        <div className="animate-pulse flex space-x-4">
-                                            <div className="rounded-full bg-slate-700 h-10 w-10"></div>
-                                            <span className="h-10 justify-center content-center">{status}</span>
-                                        </div>
+                            }
+                            { imageIsLoading &&
+                            <div className="flex justify-center items-center h-screen">
+                                <div className="loader">
+                                    <div className="animate-pulse flex space-x-4">
+                                        <div className="rounded-full bg-slate-700 h-10 w-10"></div>
+                                        <span className="h-10 justify-center content-center">{status}</span>
                                     </div>
                                 </div>
-                            )
-                            :
-                            (
-                                <div className="flex flex-col w-full h-screen max-w-md py-10 mx-auto stretch">
-                                    <div className="overflow-auto mb-8 w-full" ref={messagesContainerRef}>
-                                    {isLoading && (
-                                        <div className="flex justify-end pr-4">
-                                        <span className="animate-bounce">...</span>
-                                        </div>
-                                    )}
+                            </div>
+                            } 
+                            { !imageIsLoading &&
+                            <div className="flex flex-col w-full h-screen max-w-md py-5 mx-auto stretch">
+                                <div className="overflow-auto mb-8 w-full" ref={messagesContainerRef}>
+                                {isLoading && (
+                                    <div className="flex justify-end pr-4">
+                                    <span className="animate-bounce">...</span>
                                     </div>
-                                    <div className="center-0 w-full max-w-md">
-                                        <div className="flex flex-col justify-center mb-2 items-center">
-                                            {paintingDescription.length === 0 && (
-                                            <div>
-                                                <div className="space-y-4 mt-10 bg-opacity-50 bg-gray-700 rounded-lg p-4">
-                                                <h3 className="w-full text-xl font-semibold justify-center text-center">Selecciona el Estilo de tu NFT:</h3>
-                                    
-                                                <div className="flex flex-wrap justify-center">
-                                                    {styles.map(({ value, emoji, name }) => (
-                                                    <div
-                                                        key={value}
-                                                        className="p-4 m-2 bg-opacity-25 bg-gray-600 rounded-lg"
-                                                    >
-                                                        <input
-                                                        id={value}
-                                                        type="radio"
-                                                        name="style"
-                                                        value={value}
-                                                        onChange={handleChange}
-                                                        />
-                                                        <label className="ml-2" htmlFor={value}>
-                                                        {`${emoji} ${name}`}
-                                                        </label>
-                                                    </div>
-                                                    ))}
+                                )}
+                                </div>
+                                <div className="center-0 w-full">
+                                    <div className="flex flex-col justify-center mb-2 items-center">
+                                        {paintingDescription.length === 0 && (
+                                        <div>
+                                            <div className="space-y-4 bg-opacity-50 bg-gray-700 rounded-lg p-4">
+                                            <h3 className="w-full text-xl font-semibold justify-center text-center">Selecciona el Estilo de tu NFT:</h3>
+                                
+                                            <div className="flex flex-wrap justify-center">
+                                                {styles.map(({ value, emoji, name }) => (
+                                                <div
+                                                    key={value}
+                                                    className="p-4 m-2 bg-opacity-25 bg-gray-600 rounded-lg"
+                                                >
+                                                    <input
+                                                    id={value}
+                                                    type="radio"
+                                                    name="style"
+                                                    value={value}
+                                                    onChange={handleChange}
+                                                    />
+                                                    <label className="ml-2" htmlFor={value}>
+                                                    {`${emoji} ${name}`}
+                                                    </label>
                                                 </div>
-                                                </div>
-                                                <div className="text-center mt-4">
-                                                    <button
-                                                        className="bg-blue-500 p-2 text-white rounded-lg shadow-xl"
-                                                        disabled={isLoading || !state.style}
-                                                        onClick={
-                                                            async () => {
-                                                            setIsLoading(true);
-                                                            setImageIsLoading(true);
-                                                            setStatus("Generando la descripcion de tu NFT...");
-                                                            
-                                                            const response = await fetch("api/chat", {
-                                                                method: "POST",
-                                                                headers: {
-                                                                "Content-Type": "application/json",
-                                                                },
-                                                                body: JSON.stringify({
-                                                                message: state.style,
-                                                                }),
-                                                        });
-                                                        const data = await response.json();
+                                                ))}
+                                            </div>
+                                            </div>
+                                            <div className="text-center mt-4">
+                                                <button
+                                                    className="bg-blue-500 p-2 text-white rounded-lg shadow-xl"
+                                                    disabled={isLoading || !state.style}
+                                                    onClick={
+                                                        async () => {
+                                                        setIsLoading(true);
+                                                        setImageIsLoading(true);
+                                                        setStatus("Generando la descripcion de tu NFT...");
                                                         
-                                                        // Cleanup the response:
-                                                        const generatedImageIdea = data.messsage.replace(/\r\n|\n|\r/gm," ").replace("   ", " ");
-                                                        // console.log(`Generated image idea (text): ${generatedImageIdea}`);
-                                                        
-                                                        // Parse it to JSON:
-                                                        const objGeneratedImageIdea =  JSON.parse(generatedImageIdea);
-                                                        console.log(`Generated image idea: ${objGeneratedImageIdea.paintingDescription}`);
-                                                        
-                                                        // Set the painting description
-                                                        setpaintingTitle(objGeneratedImageIdea.paintingTitle);
-                                                        setPaintingDescription(objGeneratedImageIdea.paintingDescription);
-                                                        setIsLoading(false);
-                                                        setStatus("Generando la pintura NFT...");
-                                    
-                                                        // Image generation
-                                                        const imageResponse = await fetch("api/images", {
+                                                        const response = await fetch("api/chat", {
                                                             method: "POST",
                                                             headers: {
                                                             "Content-Type": "application/json",
                                                             },
                                                             body: JSON.stringify({
-                                                            message: data.messsage,
+                                                            message: state.style,
                                                             }),
-                                                        });
-                                                        const imageData = await imageResponse.json();
-                                                        setImage(imageData);
-                                                        setImageIsLoading(false);
-                                                        setStatus("Generando tu NFT...");
-                                                        }
+                                                    });
+                                                    const data = await response.json();
+                                                    
+                                                    // Cleanup the response:
+                                                    const generatedImageIdea = data.messsage.replace(/\r\n|\n|\r/gm," ").replace("   ", " ");
+                                                    // console.log(`Generated image idea (text): ${generatedImageIdea}`);
+                                                    
+                                                    // Parse it to JSON:
+                                                    const objGeneratedImageIdea =  JSON.parse(generatedImageIdea);
+                                                    console.log(`Generated image idea: ${objGeneratedImageIdea.paintingDescription}`);
+                                                    
+                                                    // Set the painting description
+                                                    setpaintingTitle(objGeneratedImageIdea.paintingTitle);
+                                                    setPaintingDescription(objGeneratedImageIdea.paintingDescription);
+                                                    setIsLoading(false);
+                                                    setStatus("Generando la pintura NFT...");
+                                
+                                                    // Image generation
+                                                    const imageResponse = await fetch("api/images", {
+                                                        method: "POST",
+                                                        headers: {
+                                                        "Content-Type": "application/json",
+                                                        },
+                                                        body: JSON.stringify({
+                                                        message: data.messsage,
+                                                        }),
+                                                    });
+                                                    const imageData = await imageResponse.json();
+                                                    setImage(imageData);
+                                                    setImageIsLoading(false);
+                                                    setStatus("Generando tu NFT...");
                                                     }
-                                                    >
-                                                        Pintar mi NFT
-                                                    </button>
-                                                </div>
+                                                }
+                                                >
+                                                    Pintar mi NFT
+                                                </button>
                                             </div>
-                                            )}
                                         </div>
+                                        )}
                                     </div>
                                 </div>
-                            )
-                        }
-                    </>
+                            </div>
+                            }
+                        </>
+                    )
                 }   
             </div>
         </div>

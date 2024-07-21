@@ -117,7 +117,7 @@ export function UploadImage(params: any) {
           <div>
             <div>Transacción confirmada.</div>
             <div className="text-center text-yellow-500 font-bold">Felicitaciones, tu NFT 🖼️ ha sido minteado 😎!</div>
-            <div className="text-center text-white-500 font-semibold">
+            <div className="text-center text-white-500">
               Puedes ver tu NFT en opensea, en la sección de mis NFTs <a className="text-blue-500 underline font-bold" href={`https://testnets.opensea.io/${params.walletAddress}`}> Aqui</a>
             </div>
           </div>
