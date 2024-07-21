@@ -3,10 +3,12 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useEffect, useRef, useState } from "react";
 import { useAccount } from "wagmi";
+import { UploadImage } from "./UploadImage";
 
 export default function App() {
     const { address, isConnected } = useAccount();
 
+    const [paintingTitle, setpaintingTitle] = useState<string>("");
     const [paintingDescription, setPaintingDescription] = useState<string>("");
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [status, setStatus] = useState<string>("");
@@ -67,18 +69,28 @@ export default function App() {
             { 
                 !isConnected ? (
                     <div className="mt-4 font-semibold">Conecta tu billetera para comenzar 🚀</div>
-                ) :
+                ) 
+                :
                 (
                     <>
                         {
                         image && 
                         <div className="card w-full h-screen max-w-md py-24 mx-auto stretch">
-                            <img src={image} />
+                            <img src={`data:image/jpeg;base64,${image}`} />
                             <textarea
                             className="mt-4 w-full text-white bg-black h-64"
-                            value={paintingDescription}
+                            value={`Titulo: ${paintingTitle}\n\nDescripción: ${paintingDescription}`}
                             readOnly
                             />
+                            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
+                                <UploadImage 
+                                backend_url='api/ipfs' 
+                                imageContent={image}
+                                imageTitle={paintingTitle}
+                                contractAddress={process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDR || '0x'}
+                                className="w-full"
+                                />
+                            </div>
                         </div>
                         }
                         { imageIsLoading &&
@@ -128,49 +140,57 @@ export default function App() {
                                     </div>
                                     </div>
                                     <div className="text-center mt-4">
-                                    <button
-                                        className="bg-blue-500 p-2 text-white rounded-lg shadow-xl"
-                                        disabled={isLoading || !state.style}
-                                        onClick={
-                                        async () => {
-                                        setIsLoading(true);
-                                        setImageIsLoading(true);
-                                        setStatus("Generando la descripcion de tu NFT...");
-                                        
-                                        const response = await fetch("api/chat", {
-                                            method: "POST",
-                                            headers: {
-                                            "Content-Type": "application/json",
-                                            },
-                                            body: JSON.stringify({
-                                            message: state.style,
-                                            }),
-                                        });
-                                        const data = await response.json();
-                                        // alert(data.messsage);
-                                        setPaintingDescription(data.messsage);
-                                        setIsLoading(false);
-                                        setStatus("Generando la pintura NFT...");
-                    
-                                        // Image generation
-                                        const imageResponse = await fetch("api/images", {
-                                            method: "POST",
-                                            headers: {
-                                            "Content-Type": "application/json",
-                                            },
-                                            body: JSON.stringify({
-                                            message: data.messsage,
-                                            }),
-                                        });
-                                        const imageData = await imageResponse.json();
-                                        setImage(`data:image/jpeg;base64,${imageData}`);
-                                        setImageIsLoading(false);
-                                        setStatus("Generando tu NFT...");
+                                        <button
+                                            className="bg-blue-500 p-2 text-white rounded-lg shadow-xl"
+                                            disabled={isLoading || !state.style}
+                                            onClick={
+                                            async () => {
+                                            setIsLoading(true);
+                                            setImageIsLoading(true);
+                                            setStatus("Generando la descripcion de tu NFT...");
+                                            
+                                            const response = await fetch("api/chat", {
+                                                method: "POST",
+                                                headers: {
+                                                "Content-Type": "application/json",
+                                                },
+                                                body: JSON.stringify({
+                                                message: state.style,
+                                                }),
+                                            });
+                                            const data = await response.json();
+                                            // Cleanup the response:
+                                            const generatedImageIdea = data.messsage.replace(/\r\n|\n|\r/gm," ").replace("   ", " ");
+                                            // console.log(`Generated image idea: ${generatedImageIdea}`);
+                                            // Parse it to JSON:
+                                            const objGeneratedImageIdea =  JSON.parse(generatedImageIdea);
+                                            // console.log(`Generated image idea: ${objGeneratedImageIdea.paintingDescription}`);
+                                            
+                                            // Set the painting description
+                                            setpaintingTitle(objGeneratedImageIdea.paintingTitle);
+                                            setPaintingDescription(objGeneratedImageIdea.paintingDescription);
+                                            setIsLoading(false);
+                                            setStatus("Generando la pintura NFT...");
+                        
+                                            // Image generation
+                                            const imageResponse = await fetch("api/images", {
+                                                method: "POST",
+                                                headers: {
+                                                "Content-Type": "application/json",
+                                                },
+                                                body: JSON.stringify({
+                                                message: data.messsage,
+                                                }),
+                                            });
+                                            const imageData = await imageResponse.json();
+                                            setImage(imageData);
+                                            setImageIsLoading(false);
+                                            setStatus("Generando tu NFT...");
+                                            }
                                         }
-                                    }
-                                    >
-                                        Pintar mi NFT
-                                    </button>
+                                        >
+                                            Pintar mi NFT
+                                        </button>
                                     </div>
                                 </div>
                                 )}

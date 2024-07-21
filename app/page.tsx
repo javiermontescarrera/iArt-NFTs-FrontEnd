@@ -1,6 +1,8 @@
 "use client";
 import '@rainbow-me/rainbowkit/styles.css';
 
+import App from './components/App';
+
 // Rainbowkit ===================================================================================================
 import { 
   getDefaultConfig, 
@@ -9,7 +11,6 @@ import {
 import { arbitrum, arbitrumSepolia } from "wagmi/chains";
 import { WagmiProvider } from "wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import App from './components/App';
 
 const config = getDefaultConfig({
   appName: process.env.NEXT_PUBLIC_RAINBOW_PROJECT_NAME || 'iArt-NFTs',
