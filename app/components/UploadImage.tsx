@@ -58,11 +58,11 @@ export function UploadImage(params: any) {
       })
       .then(res => res.json())
       .then(ipfsData => {
-        console.log(`IPFS response: ${JSON.stringify(ipfsData)}`);
+        // console.log(`IPFS response: ${JSON.stringify(ipfsData)}`);
         setIpfsHash(ipfsData.result.IpfsHash);
         setLoading(false);
   
-        console.log(`ipfsData.IpfsHash> ${ipfsData.result.IpfsHash}`);
+        console.log(`IpfsHash: ${ipfsData.result.IpfsHash}`);
         try {
           writeContract({ 
             address: params.contractAddress, 
@@ -78,7 +78,6 @@ export function UploadImage(params: any) {
           })
 
           setNftMinted(true);
-          console.log(`Mint transaction hash: ${hash}`);
         } catch (error) {
           console.error(error);
         }
