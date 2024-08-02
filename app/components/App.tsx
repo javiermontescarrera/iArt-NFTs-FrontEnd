@@ -203,6 +203,7 @@ const App: NextPage = () => {
                                                     });
                                                     const imageData = await imageResponse.json();
                                                     setImage(imageData);
+                                                    // setImage(imageData.result);
                                                     setImageIsLoading(false);
                                                     setStatus("Generando tu NFT...");
                                                     }

@@ -1,4 +1,5 @@
 import { HfInference } from "@huggingface/inference";
+import { NextResponse } from "next/dist/server/web/spec-extension/response";
 
 const hf = new HfInference(process.env.HUGGING_FACE_API_KEY);
 
@@ -27,12 +28,14 @@ export async function POST(req: Request) {
       }
     });
   
-    // console.log(`response.type: ${response.type}`)
+    // console.log(`Image generation response.type: ${response.type}`);
+    // console.log(`Imgae generation response: ${JSON.stringify(response.type)}`);
   
     const buffer = Buffer.from(await response.arrayBuffer());
     const cadena = `"${buffer.toString('base64')}"`;
     // console.log(`Cadena: ${cadena}`);
     return new Response(cadena);
+    // return NextResponse.json({ result: cadena });
 
   } catch (error) {
     console.log(error);
