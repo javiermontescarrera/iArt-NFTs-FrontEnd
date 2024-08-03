@@ -98,7 +98,7 @@ const App: NextPage = () => {
                                 />
                                 <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
                                     <UploadImage 
-                                        backend_url={`${process.env.NEXT_PUBLIC_API_URL}/ipfs`} 
+                                        backend_url={`/api/ipfs`} 
                                         imageContent={image}
                                         imageTitle={paintingTitle}
                                         imageDescription={paintingDescription}
@@ -165,8 +165,8 @@ const App: NextPage = () => {
                                                         setIsLoading(true);
                                                         setImageIsLoading(true);
                                                         setStatus("Generando la descripcion de tu NFT...");
-                                                        console.log(`api: ${process.env.NEXT_PUBLIC_API_URL}/chat`);
-                                                        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat`, {
+                                                        // console.log(`api: ${process.env.NEXT_PUBLIC_API_URL}/chat`);
+                                                        const response = await fetch(`/api/chat`, {
                                                             method: "POST",
                                                             headers: {
                                                             "Content-Type": "application/json",
@@ -192,7 +192,7 @@ const App: NextPage = () => {
                                                     setStatus("Generando la pintura NFT...");
                                 
                                                     // Image generation
-                                                    const imageResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/images`, {
+                                                    const imageResponse = await fetch(`/api/images`, {
                                                         method: "POST",
                                                         headers: {
                                                             "Content-Type": "application/json",
